@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="PromptVault — Save, organize and reuse your best AI prompts on ChatGPT, Claude, Gemini and more. One-click insert. Free forever plan." />
+<meta name="theme-color" content="#0a0a0f" />
+<title>PromptVault — Your AI Prompts, Always Ready</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ---------- RESET / BASE ---------- */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    font-family:'DM Sans',system-ui,-apple-system,sans-serif;
+    background:#0a0a0f;
+    color:#ececf1;
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  img{max-width:100%;display:block}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+  :root{
+    --bg:#0a0a0f;
+    --bg-2:#111119;
+    --bg-3:#16161f;
+    --border:rgba(255,255,255,.08);
+    --border-2:rgba(255,255,255,.14);
+    --text:#ececf1;
+    --muted:#9a9aae;
+    --accent:#7c6aff;
+    --accent-2:#5f4dff;
+    --accent-soft:rgba(124,106,255,.14);
+    --radius:14px;
+    --mono:'Space Mono',ui-monospace,monospace;
+  }
+
+  /* ---------- GLOBAL ACCENTS ---------- */
+  ::selection{background:var(--accent);color:#fff}
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(124,106,255,.18), transparent 60%),
+      radial-gradient(900px 500px at 100% 10%, rgba(124,106,255,.10), transparent 60%);
+    pointer-events:none;z-index:0;
+  }
+  main,nav,footer{position:relative;z-index:1}
+
+  .container{width:min(1140px,92%);margin-inline:auto}
+
+  /* ---------- BUTTONS ---------- */
+  .btn-primary{
+    display:inline-flex;align-items:center;gap:.55rem;
+    background:var(--accent);color:#fff;
+    padding:.85rem 1.4rem;border-radius:999px;
+    font-weight:600;letter-spacing:.01em;
+    transition:transform .18s ease, background-color .18s ease, box-shadow .18s ease;
+    box-shadow:0 8px 24px -8px rgba(124,106,255,.55);
+  }
+  .btn-primary:hover{background:var(--accent-2);transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(124,106,255,.7)}
+  .btn-primary:active{transform:translateY(0)}
+  .btn-ghost{
+    display:inline-flex;align-items:center;gap:.45rem;
+    padding:.85rem 1.1rem;border-radius:999px;
+    color:var(--muted);
+    transition:color .18s ease, background-color .18s ease;
+  }
+  .btn-ghost:hover{color:var(--text);background:rgba(255,255,255,.04)}
+
+  /* ---------- NAVBAR ---------- */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:saturate(160%) blur(14px);
+    -webkit-backdrop-filter:saturate(160%) blur(14px);
+    background:rgba(10,10,15,.65);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:1rem 0;
+  }
+  .logo{
+    display:flex;align-items:center;gap:.55rem;
+    font-weight:700;letter-spacing:-.01em;font-size:1.15rem;
+  }
+  .logo-dot{
+    width:12px;height:12px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 0 4px rgba(124,106,255,.18);
+  }
+  .nav-links{display:flex;gap:.4rem;align-items:center}
+  .nav-links a{
+    color:var(--muted);padding:.55rem .85rem;border-radius:999px;
+    transition:color .18s, background-color .18s;font-size:.95rem;
+  }
+  .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.04)}
+  .nav-cta{margin-left:.5rem}
+
+  .menu-btn{display:none;padding:.5rem;color:var(--muted)}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:6rem 0 4rem;text-align:center}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:.5rem;
+    padding:.35rem .8rem;border-radius:999px;
+    background:var(--accent-soft);color:#c7beff;
+    font-family:var(--mono);font-size:.78rem;letter-spacing:.03em;
+    border:1px solid rgba(124,106,255,.3);
+    margin-bottom:1.4rem;
+  }
+  .eyebrow span{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+  h1.hero-title{
+    font-size:clamp(2.2rem,5.5vw,4.2rem);
+    font-weight:700;line-height:1.08;letter-spacing:-.025em;
+    margin-bottom:1.2rem;
+  }
+  h1.hero-title em{
+    font-style:normal;
+    background:linear-gradient(90deg,#a99bff,#7c6aff);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero-sub{
+    max-width:640px;margin:0 auto 2rem;
+    color:var(--muted);font-size:clamp(1rem,1.3vw,1.15rem);
+  }
+  .hero-cta{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;align-items:center}
+
+  .hero-visual{
+    margin-top:4rem;position:relative;
+    border-radius:18px;
+    border:1px solid var(--border-2);
+    background:linear-gradient(180deg,#13131d,#0e0e17);
+    padding:.9rem;box-shadow:0 40px 80px -40px rgba(124,106,255,.35);
+  }
+  .hero-visual::before{
+    content:"";position:absolute;inset:-1px;border-radius:19px;
+    background:linear-gradient(140deg,rgba(124,106,255,.55),transparent 40%);
+    z-index:-1;filter:blur(20px);opacity:.6;
+  }
+
+  /* mock extension panel */
+  .mock{
+    display:grid;grid-template-columns:260px 1fr;gap:0;
+    background:#0b0b13;border-radius:12px;overflow:hidden;
+    border:1px solid var(--border);
+    font-size:.85rem;
+  }
+  .mock-side{
+    padding:1rem;border-right:1px solid var(--border);
+    background:#0d0d16;
+  }
+  .mock-search{
+    background:#15151f;border:1px solid var(--border);
+    padding:.55rem .7rem;border-radius:8px;color:var(--muted);
+    display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;
+    font-family:var(--mono);font-size:.75rem;
+  }
+  .mock-cat{color:var(--muted);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin:.9rem 0 .4rem}
+  .mock-item{
+    padding:.55rem .7rem;border-radius:7px;color:#cfcfd8;
+    display:flex;align-items:center;gap:.55rem;
+    transition:background .15s;
+  }
+  .mock-item.active{background:var(--accent-soft);color:#e3dcff;border:1px solid rgba(124,106,255,.35)}
+  .mock-item .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .mock-main{padding:1.2rem 1.4rem;text-align:left}
+  .mock-title{font-weight:600;font-size:1rem;margin-bottom:.35rem}
+  .mock-tags{display:flex;gap:.35rem;margin-bottom:1rem}
+  .mock-tag{font-family:var(--mono);font-size:.68rem;padding:.15rem .5rem;border-radius:999px;background:#15151f;border:1px solid var(--border);color:var(--muted)}
+  .mock-body{
+    background:#0d0d16;border:1px solid var(--border);border-radius:10px;
+    padding:1rem;color:#bfbfcc;font-family:var(--mono);font-size:.78rem;line-height:1.7;
+    white-space:pre-wrap;
+  }
+  .mock-body .var{color:#c0b5ff;background:rgba(124,106,255,.14);padding:0 .25rem;border-radius:4px}
+  .mock-actions{display:flex;gap:.5rem;margin-top:1rem}
+  .mock-btn{padding:.55rem .9rem;border-radius:8px;background:var(--accent);color:#fff;font-size:.78rem;font-weight:600}
+  .mock-btn.ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+
+  /* ---------- PROBLEM BAR ---------- */
+  .problem{
+    border-block:1px solid var(--border);
+    background:rgba(255,255,255,.02);
+    padding:1.6rem 0;text-align:center;
+    font-size:1.05rem;color:#cfcfd8;
+  }
+  .problem strong{color:#fff}
+
+  /* ---------- SECTION COMMON ---------- */
+  section.block{padding:6rem 0}
+  .section-head{max-width:640px;margin:0 auto 3rem;text-align:center}
+  .section-head .kicker{
+    font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:.8rem;
+  }
+  .section-head h2{
+    font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:700;
+    letter-spacing:-.02em;line-height:1.15;margin-bottom:.8rem;
+  }
+  .section-head p{color:var(--muted)}
+
+  /* ---------- FEATURES ---------- */
+  .features-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;
+  }
+  .feature{
+    padding:1.8rem;border-radius:var(--radius);
+    background:linear-gradient(180deg,var(--bg-2),var(--bg));
+    border:1px solid var(--border);
+    transition:transform .25s ease, border-color .25s ease, background-color .25s ease;
+  }
+  .feature:hover{transform:translateY(-4px);border-color:var(--border-2)}
+  .f-icon{
+    width:44px;height:44px;border-radius:10px;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--accent-soft);color:var(--accent);
+    border:1px solid rgba(124,106,255,.3);
+    margin-bottom:1rem;
+  }
+  .f-icon svg{width:22px;height:22px}
+  .feature h3{font-size:1.1rem;font-weight:600;margin-bottom:.45rem}
+  .feature p{color:var(--muted);font-size:.95rem}
+
+  /* ---------- HERO SHOT ---------- */
+  .hero-shot{
+    width:100%;height:auto;display:block;
+    border-radius:12px;
+    border:1px solid var(--border);
+  }
+
+  /* ---------- SHOWCASE ---------- */
+  .showcase-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;
+  }
+  .showcase-card{
+    background:linear-gradient(180deg,var(--bg-2),var(--bg));
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:1rem 1rem 1.2rem;
+    transition:transform .25s ease, border-color .25s ease;
+    overflow:hidden;
+    margin:0;
+  }
+  .showcase-card:hover{transform:translateY(-4px);border-color:var(--border-2)}
+  .showcase-card img{
+    width:100%;height:auto;
+    border-radius:8px;
+    border:1px solid var(--border);
+    aspect-ratio:720/900;
+    object-fit:cover;
+    object-position:top;
+  }
+  .showcase-card figcaption{
+    color:var(--muted);font-size:.92rem;margin-top:.95rem;text-align:center;
+  }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;
+    counter-reset:step;
+  }
+  .step{
+    position:relative;padding:2rem 1.6rem;border-radius:var(--radius);
+    border:1px solid var(--border);background:var(--bg-2);
+  }
+  .step-num{
+    font-family:var(--mono);font-size:.85rem;color:var(--accent);
+    border:1px solid rgba(124,106,255,.35);background:var(--accent-soft);
+    padding:.25rem .6rem;border-radius:999px;display:inline-block;margin-bottom:1rem;
+  }
+  .step h3{font-size:1.1rem;margin-bottom:.4rem}
+  .step p{color:var(--muted);font-size:.95rem}
+
+  /* ---------- COMPATIBLE ---------- */
+  .compat-row{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:.7rem;
+  }
+  .pill{
+    display:inline-flex;align-items:center;gap:.55rem;
+    padding:.65rem 1.1rem;border-radius:999px;
+    background:var(--bg-2);border:1px solid var(--border);
+    color:#d5d5de;font-size:.92rem;
+    transition:border-color .2s, transform .2s, color .2s;
+  }
+  .pill:hover{border-color:var(--accent);color:#fff;transform:translateY(-2px)}
+  .pill .ico{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+
+  /* ---------- PRICING ---------- */
+  .price-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;
+    align-items:stretch;
+  }
+  .price{
+    position:relative;
+    padding:2rem 1.8rem;border-radius:var(--radius);
+    background:var(--bg-2);border:1px solid var(--border);
+    display:flex;flex-direction:column;
+    transition:transform .25s, border-color .25s;
+  }
+  .price:hover{transform:translateY(-4px)}
+  .price.featured{
+    border:1px solid var(--accent);
+    background:linear-gradient(180deg,rgba(124,106,255,.09),var(--bg-2));
+    box-shadow:0 30px 60px -30px rgba(124,106,255,.35);
+  }
+  .badge{
+    position:absolute;top:-12px;left:50%;transform:translateX(-50%);
+    background:var(--accent);color:#fff;
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;
+    padding:.3rem .75rem;border-radius:999px;font-weight:700;
+  }
+  .price h3{font-size:1.1rem;margin-bottom:.3rem}
+  .price .p-desc{color:var(--muted);font-size:.88rem;margin-bottom:1.2rem}
+  .price .p-amount{
+    font-size:2.4rem;font-weight:700;letter-spacing:-.02em;
+    display:flex;align-items:baseline;gap:.4rem;margin-bottom:.15rem;
+  }
+  .price .p-amount small{font-size:1rem;color:var(--muted);font-weight:500}
+  .price .p-sub{color:var(--muted);font-size:.85rem;margin-bottom:1.4rem}
+  .price ul{list-style:none;margin-bottom:1.6rem;flex-grow:1}
+  .price li{
+    display:flex;align-items:flex-start;gap:.6rem;
+    padding:.45rem 0;color:#cfcfd8;font-size:.94rem;
+  }
+  .price li svg{flex-shrink:0;margin-top:3px;color:var(--accent)}
+  .price .btn-primary{justify-content:center;width:100%}
+  .price .btn-outline{
+    display:flex;justify-content:center;width:100%;
+    padding:.85rem 1.2rem;border-radius:999px;
+    border:1px solid var(--border-2);color:var(--text);
+    font-weight:600;transition:border-color .18s, background-color .18s;
+  }
+  .price .btn-outline:hover{border-color:var(--accent);background:var(--accent-soft)}
+
+  .price-monthly{
+    margin-top:1.2rem;
+    display:flex;align-items:center;justify-content:space-between;gap:1rem;
+    padding:1.2rem 1.6rem;border-radius:var(--radius);
+    background:var(--bg-2);border:1px dashed var(--border-2);
+  }
+  .price-monthly .pm-left{display:flex;flex-direction:column;gap:.15rem}
+  .price-monthly .pm-amount{font-size:1.3rem;font-weight:700}
+  .price-monthly .pm-amount small{font-size:.9rem;color:var(--muted);font-weight:500}
+  .price-monthly .pm-desc{color:var(--muted);font-size:.85rem}
+
+  /* ---------- FAQ ---------- */
+  .faq{max-width:760px;margin:0 auto}
+  .faq-item{
+    border-bottom:1px solid var(--border);
+  }
+  .faq-q{
+    width:100%;display:flex;align-items:center;justify-content:space-between;
+    padding:1.4rem 0;text-align:left;font-size:1.05rem;font-weight:500;
+    transition:color .18s;
+  }
+  .faq-q:hover{color:#fff}
+  .faq-q .chev{
+    width:20px;height:20px;transition:transform .25s ease;color:var(--muted);
+  }
+  .faq-item.open .faq-q .chev{transform:rotate(180deg);color:var(--accent)}
+  .faq-a{
+    max-height:0;overflow:hidden;
+    transition:max-height .3s ease, padding .3s ease;
+    color:var(--muted);font-size:.98rem;
+  }
+  .faq-item.open .faq-a{padding:0 0 1.4rem;max-height:400px}
+
+  /* ---------- FINAL CTA ---------- */
+  .final-cta{
+    margin:3rem 0;padding:3.5rem 2rem;border-radius:20px;text-align:center;
+    background:
+      radial-gradient(600px 200px at 50% 0%, rgba(124,106,255,.25), transparent 70%),
+      linear-gradient(180deg,var(--bg-2),var(--bg));
+    border:1px solid var(--border-2);
+  }
+  .final-cta h2{font-size:clamp(1.6rem,3vw,2.3rem);margin-bottom:.8rem;letter-spacing:-.02em}
+  .final-cta p{color:var(--muted);margin-bottom:1.5rem}
+
+  /* ---------- FOOTER / LEGAL ---------- */
+  footer{
+    border-top:1px solid var(--border);
+    padding:3rem 0 2rem;margin-top:2rem;
+    color:var(--muted);font-size:.92rem;
+  }
+  .footer-top{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    gap:2rem;flex-wrap:wrap;margin-bottom:2rem;
+  }
+  .footer-brand{max-width:320px}
+  .footer-brand p{margin-top:.7rem;font-size:.9rem}
+  .footer-links{display:flex;gap:1.2rem;flex-wrap:wrap}
+  .footer-links a{transition:color .18s}
+  .footer-links a:hover{color:#fff}
+  .footer-bottom{
+    border-top:1px solid var(--border);padding-top:1.4rem;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;
+    font-size:.85rem;
+  }
+
+  /* ---------- REVEAL ANIM ---------- */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 1100px){
+    .features-grid{grid-template-columns:repeat(3,1fr)}
+  }
+  @media (max-width: 960px){
+    .features-grid,.steps,.price-grid,.showcase-grid{grid-template-columns:1fr 1fr}
+    .mock{grid-template-columns:1fr}
+    .mock-side{border-right:none;border-bottom:1px solid var(--border)}
+  }
+  @media (max-width: 720px){
+    .hero{padding:4rem 0 2rem}
+    section.block{padding:4rem 0}
+    .nav-links{display:none}
+    .menu-btn{display:inline-flex}
+    .nav-links.open{
+      display:flex;flex-direction:column;align-items:stretch;
+      position:absolute;top:100%;left:0;right:0;
+      background:var(--bg);border-bottom:1px solid var(--border);
+      padding:1rem;gap:.2rem;
+    }
+    .nav-links.open a{padding:.8rem 1rem;border-radius:10px}
+    .features-grid,.steps,.price-grid,.showcase-grid{grid-template-columns:1fr}
+    .footer-top{flex-direction:column}
+    .footer-bottom{flex-direction:column;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== NAVBAR ===================== -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="#top" class="logo" data-testid="logo-link">
+      <span class="logo-dot"></span>
+      PromptVault
+    </a>
+    <div class="nav-links" id="navLinks" data-testid="nav-links">
+      <a href="#features" data-testid="nav-features">Features</a>
+      <a href="#pricing" data-testid="nav-pricing">Pricing</a>
+      <a href="#faq" data-testid="nav-faq">FAQ</a>
+      <a href="#" class="btn-primary nav-cta" data-testid="nav-cta-chrome">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M21.17 8H12"/><path d="M3.95 6.06 8.54 14"/><path d="M10.88 21.94 15.46 14"/></svg>
+        Add to Chrome — Free
+      </a>
+    </div>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu" data-testid="nav-menu-btn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero container">
+    <span class="eyebrow reveal"><span></span> NEW — 48 ready-made prompts included</span>
+    <h1 class="hero-title reveal">Your <em>AI Prompts</em>,<br/>Always Ready.</h1>
+    <p class="hero-sub reveal">Save, organize and reuse your best prompts on ChatGPT, Claude and more — insert them in one click without ever retyping.</p>
+    <div class="hero-cta reveal">
+      <a href="#" class="btn-primary" data-testid="hero-cta-chrome">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M21.17 8H12"/><path d="M3.95 6.06 8.54 14"/><path d="M10.88 21.94 15.46 14"/></svg>
+        Add to Chrome — It's Free
+      </a>
+      <a href="#how" class="btn-ghost" data-testid="hero-cta-how">See how it works ↓</a>
+    </div>
+
+    <!-- HERO VISUAL: real product screenshot -->
+    <div class="hero-visual reveal" data-testid="hero-visual">
+      <img
+        src="screenshot_store/Screenshot 2026-04-28 182118.png"
+        alt="PromptVault running inside ChatGPT — prompt library on the right"
+        class="hero-shot"
+        loading="eager"
+        width="1280" height="800"
+      />
+    </div>
+  </section>
+
+  <!-- ===================== PROBLEM BAR ===================== -->
+  <section class="problem">
+    <div class="container">
+      Tired of rewriting the same prompts every day? <strong>PromptVault fixes that.</strong>
+    </div>
+  </section>
+
+  <!-- ===================== FEATURES ===================== -->
+  <section class="block container" id="features">
+    <div class="section-head reveal">
+      <div class="kicker">// Features</div>
+      <h2>Everything you need to master your prompts.</h2>
+      <p>Powerful, minimal, and built to live inside your favorite AI tools.</p>
+    </div>
+    <div class="features-grid">
+      <article class="feature reveal" data-testid="feature-oneclick">
+        <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <h3>One-click insert</h3>
+        <p>Insert any saved prompt directly into ChatGPT, Claude or Gemini with a single click.</p>
+      </article>
+      <article class="feature reveal" data-testid="feature-library">
+        <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+        <h3>Built-in library</h3>
+        <p>48 ready-made professional prompts across 8 categories to get you started instantly.</p>
+      </article>
+      <article class="feature reveal" data-testid="feature-search">
+        <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+        <h3>Search & filter</h3>
+        <p>Find any prompt in seconds with full-text search and category filters.</p>
+      </article>
+      <article class="feature reveal" data-testid="feature-variables">
+        <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/><path d="m9 9 6 6"/><path d="m15 9-6 6"/></svg></div>
+        <h3>Dynamic variables</h3>
+        <p>Use [PLACEHOLDERS] in your prompts and fill them in via a popup before inserting.</p>
+      </article>
+      <article class="feature reveal" data-testid="feature-cloud">
+        <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 1 0-1.13-8.85 6 6 0 0 0-11.6 1.72A4 4 0 0 0 6.5 19z"/></svg></div>
+        <h3>Cloud sync <span style="color:var(--accent);font-family:var(--mono);font-size:.7em">PRO</span></h3>
+        <p>Access your prompts on any device — always in sync, always ready.</p>
+      </article>
+      <article class="feature reveal" data-testid="feature-languages">
+        <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <h3>6 languages</h3>
+        <p>Available in English, Italian, Spanish, French, Portuguese and German.</p>
+      </article>
+      <article class="feature reveal" data-testid="feature-ai">
+        <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M5.6 5.6l2.1 2.1"/><path d="M16.3 16.3l2.1 2.1"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="M5.6 18.4l2.1-2.1"/><path d="M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <h3>Improve with AI</h3>
+        <p>Make any prompt sharper in one click — powered by Groq, Gemini, OpenAI or Anthropic.</p>
+      </article>
+      <article class="feature reveal" data-testid="feature-themes">
+        <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="1.5" fill="currentColor"/><circle cx="17.5" cy="10.5" r="1.5" fill="currentColor"/><circle cx="8.5" cy="7.5" r="1.5" fill="currentColor"/><circle cx="6.5" cy="12.5" r="1.5" fill="currentColor"/><path d="M12 2a10 10 0 1 0 0 20c1.7 0 2.5-1.3 2.5-2.5 0-1.5-1.5-2-1.5-3.5 0-1 .8-2 2-2H17a5 5 0 0 0 5-5 10 10 0 0 0-10-7z"/></svg></div>
+        <h3>Customizable themes</h3>
+        <p>6 preset themes plus a custom accent color so the panel always matches your style.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== SHOWCASE ===================== -->
+  <section class="block container" id="showcase">
+    <div class="section-head reveal">
+      <div class="kicker">// In action</div>
+      <h2>See PromptVault working.</h2>
+      <p>The full prompt manager, right inside your favorite AI tool.</p>
+    </div>
+    <div class="showcase-grid">
+      <figure class="showcase-card reveal" data-testid="showcase-library">
+        <img src="screenshot_panel/Screenshot 2026-04-28 182245.png" alt="48+ ready-to-use prompts in the library" loading="lazy"/>
+        <figcaption>48+ ready-to-use prompts in the library.</figcaption>
+      </figure>
+      <figure class="showcase-card reveal" data-testid="showcase-ai">
+        <img src="screenshot_panel/Screenshot 2026-04-28 182220.png" alt="AI-powered prompt improvement" loading="lazy"/>
+        <figcaption>Improve any prompt with AI in one click.</figcaption>
+      </figure>
+      <figure class="showcase-card reveal" data-testid="showcase-variables">
+        <img src="screenshot_panel/Screenshot 2026-04-28 182306.png" alt="Fill variables modal" loading="lazy"/>
+        <figcaption>Dynamic variables, filled in seconds.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===================== HOW IT WORKS ===================== -->
+  <section class="block container" id="how">
+    <div class="section-head reveal">
+      <div class="kicker">// How it works</div>
+      <h2>Three steps. That's it.</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal" data-testid="step-1">
+        <div class="step-num">01</div>
+        <h3>Install the extension</h3>
+        <p>Add PromptVault from the Chrome Web Store in one click — no account required.</p>
+      </div>
+      <div class="step reveal" data-testid="step-2">
+        <div class="step-num">02</div>
+        <h3>Save your prompts</h3>
+        <p>Save your best prompts or import them from the built-in library of 48 templates.</p>
+      </div>
+      <div class="step reveal" data-testid="step-3">
+        <div class="step-num">03</div>
+        <h3>Insert in one click</h3>
+        <p>Open any AI chat and inject the perfect prompt instantly. No more retyping.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COMPATIBLE ===================== -->
+  <section class="block container">
+    <div class="section-head reveal">
+      <div class="kicker">// Compatible with</div>
+      <h2>Works where you already work.</h2>
+      <p>Native integration with the AI tools you use every day.</p>
+    </div>
+    <div class="compat-row reveal" data-testid="compat-row">
+      <span class="pill"><span class="ico"></span>ChatGPT</span>
+      <span class="pill"><span class="ico"></span>Claude</span>
+      <span class="pill"><span class="ico"></span>Gemini</span>
+      <span class="pill"><span class="ico"></span>Perplexity</span>
+      <span class="pill"><span class="ico"></span>Grok</span>
+      <span class="pill"><span class="ico"></span>Mistral</span>
+      <span class="pill"><span class="ico"></span>Copilot</span>
+      <span class="pill"><span class="ico"></span>DeepSeek</span>
+    </div>
+  </section>
+
+  <!-- ===================== PRICING ===================== -->
+  <section class="block container" id="pricing">
+    <div class="section-head reveal">
+      <div class="kicker">// Pricing</div>
+      <h2>Simple, honest pricing.</h2>
+      <p>Start free. Go Pro when you're ready — cancel anytime.</p>
+    </div>
+    <div class="price-grid">
+
+      <!-- Free -->
+      <div class="price reveal" data-testid="price-free">
+        <h3>Free</h3>
+        <p class="p-desc">For casual AI users.</p>
+        <div class="p-amount">€0 <small>/ forever</small></div>
+        <div class="p-sub">No credit card required</div>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Up to 5 prompts saved</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Search & categories</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Dynamic variables</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Works on all major AI tools</li>
+        </ul>
+        <a href="#" class="btn-outline" data-testid="price-free-cta">Add to Chrome</a>
+      </div>
+
+      <!-- Pro Yearly (featured) -->
+      <div class="price featured reveal" data-testid="price-yearly">
+        <span class="badge">BEST VALUE</span>
+        <h3>Pro Yearly</h3>
+        <p class="p-desc">For power users who use AI daily.</p>
+        <div class="p-amount">€29.99 <small>/ year</small></div>
+        <div class="p-sub">Just €2.50/month — save 37%</div>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><strong>Unlimited</strong> prompts saved</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Full library (48 prompts)</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><strong>Improve with AI</strong> (4 providers)</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Customizable themes</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Cloud sync across devices</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Import / export JSON</li>
+        </ul>
+        <a href="https://mypromtvault.lemonsqueezy.com/checkout" class="btn-primary" data-testid="price-yearly-cta">Get Pro Yearly →</a>
+      </div>
+
+      <!-- Lifetime -->
+      <div class="price reveal" data-testid="price-lifetime">
+        <h3>Pro Lifetime</h3>
+        <p class="p-desc">One payment. Forever yours.</p>
+        <div class="p-amount">€49.99 <small>/ once</small></div>
+        <div class="p-sub">Pay once, use forever</div>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Everything in Pro Yearly</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>All future Pro features</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>No subscription, no renewals</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Best for long-term users</li>
+        </ul>
+        <a href="https://mypromtvault.lemonsqueezy.com/checkout" class="btn-outline" data-testid="price-lifetime-cta">Get Lifetime →</a>
+      </div>
+    </div>
+
+    <!-- Pro Monthly (smaller row) -->
+    <div class="price-monthly reveal" data-testid="price-monthly">
+      <div class="pm-left">
+        <div class="pm-amount">Pro Monthly — €3.99 <small>/ month</small></div>
+        <div class="pm-desc">Same features as Pro Yearly. Cancel anytime.</div>
+      </div>
+      <a href="https://mypromtvault.lemonsqueezy.com/checkout" class="btn-outline" style="width:auto;white-space:nowrap" data-testid="price-monthly-cta">Get Pro Monthly →</a>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section class="block container" id="faq">
+    <div class="section-head reveal">
+      <div class="kicker">// FAQ</div>
+      <h2>Frequently asked questions.</h2>
+    </div>
+    <div class="faq">
+      <div class="faq-item" data-testid="faq-1">
+        <button class="faq-q" aria-expanded="false">
+          Does the free plan expire?
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><p>No. The free plan is free forever — no credit card required. You get up to 5 saved prompts and can upgrade whenever you want.</p></div>
+      </div>
+      <div class="faq-item" data-testid="faq-2">
+        <button class="faq-q" aria-expanded="false">
+          Which AI platforms are supported?
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><p>ChatGPT, Claude, Gemini, Perplexity, Grok, Mistral, Copilot, DeepSeek and Canva. We add new platforms regularly.</p></div>
+      </div>
+      <div class="faq-item" data-testid="faq-3">
+        <button class="faq-q" aria-expanded="false">
+          What is cloud sync?
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><p>Pro users can sign in with Google and automatically access their prompts on any computer — no manual export/import needed.</p></div>
+      </div>
+      <div class="faq-item" data-testid="faq-4">
+        <button class="faq-q" aria-expanded="false">
+          Can I import my existing prompts?
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><p>Yes. Pro users can export and import prompts as JSON files — perfect for backups or migrating from another tool.</p></div>
+      </div>
+      <div class="faq-item" data-testid="faq-5">
+        <button class="faq-q" aria-expanded="false">
+          Is there a refund policy?
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><p>Yes — we offer a 7-day money-back guarantee, no questions asked. Just email us within 7 days of your purchase.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FINAL CTA ===================== -->
+  <section class="container">
+    <div class="final-cta reveal">
+      <h2>Stop retyping. Start prompting.</h2>
+      <p>Join thousands of professionals who save hours every week with PromptVault.</p>
+      <a href="#" class="btn-primary" data-testid="final-cta">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M21.17 8H12"/><path d="M3.95 6.06 8.54 14"/><path d="M10.88 21.94 15.46 14"/></svg>
+        Add to Chrome — It's Free
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo"><span class="logo-dot"></span> PromptVault</div>
+        <p>Your AI Prompts, Always Ready. Save, organize and reuse your best prompts on every AI platform.</p>
+      </div>
+      <div class="footer-links" data-testid="footer-links">
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+        <a href="docs.html">Use your own API key</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="mailto:andreaguarnieri71@gmail.com">Contact</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© 2025 PromptVault. All rights reserved.</div>
+      <div>Made with <span style="color:var(--accent)">♥</span> for prompt lovers.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.parentElement;
+      const open = item.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
+
+  // Mobile menu
+  const menuBtn = document.getElementById('menuBtn');
+  const navLinks = document.getElementById('navLinks');
+  menuBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>

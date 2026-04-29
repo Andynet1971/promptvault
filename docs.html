@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="PromptVault — how to bring your own AI API key (Groq, Gemini, OpenAI, Anthropic) to unlock unlimited prompt improvements." />
+<meta name="theme-color" content="#0a0a0f" />
+<title>Use your own API key — PromptVault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    font-family:'DM Sans',system-ui,-apple-system,sans-serif;
+    background:#0a0a0f;color:#ececf1;line-height:1.7;
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  }
+  a{color:inherit;text-decoration:none}
+  body::before{
+    content:"";position:fixed;inset:0;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(124,106,255,.18), transparent 60%),
+      radial-gradient(900px 500px at 100% 10%, rgba(124,106,255,.10), transparent 60%);
+    pointer-events:none;z-index:0;
+  }
+  nav,main,footer{position:relative;z-index:1}
+  .container{width:min(900px,92%);margin-inline:auto}
+
+  .nav{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:saturate(160%) blur(14px);
+    -webkit-backdrop-filter:saturate(160%) blur(14px);
+    background:rgba(10,10,15,.65);
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .nav-inner{
+    width:min(1140px,92%);margin-inline:auto;
+    display:flex;align-items:center;justify-content:space-between;padding:1rem 0;
+  }
+  .logo{display:flex;align-items:center;gap:.55rem;font-weight:700;font-size:1.15rem}
+  .logo-dot{width:12px;height:12px;border-radius:50%;background:#7c6aff;box-shadow:0 0 0 4px rgba(124,106,255,.18)}
+  .nav-back{color:#9a9aae;padding:.55rem .85rem;border-radius:999px;font-size:.95rem;transition:color .18s, background-color .18s}
+  .nav-back:hover{color:#ececf1;background:rgba(255,255,255,.04)}
+
+  main{padding:4rem 0 6rem}
+  .doc h1{font-size:2.4rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.4rem}
+  .doc .lede{color:#9a9aae;font-size:1.05rem;margin-bottom:2.5rem}
+  .doc h2{font-size:1.5rem;font-weight:600;color:#fff;margin:3rem 0 1rem}
+  .doc h3{font-size:1.1rem;font-weight:600;color:#fff;margin:1.5rem 0 .5rem}
+  .doc p,.doc li{color:#c5c5d2;font-size:.98rem;margin-bottom:.8rem}
+  .doc ul,.doc ol{padding-left:1.4rem;margin-bottom:.8rem}
+  .doc a.link{color:#7c6aff;border-bottom:1px solid rgba(124,106,255,.4);transition:border-color .18s}
+  .doc a.link:hover{border-bottom-color:#7c6aff}
+  .doc code{
+    font-family:'Space Mono',ui-monospace,monospace;
+    background:rgba(124,106,255,.14);color:#c0b5ff;
+    padding:.05em .35em;border-radius:4px;font-size:.88em;
+  }
+
+  .compare{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;
+    margin:1.5rem 0 2rem;
+  }
+  .compare-card{
+    border:1px solid rgba(255,255,255,.08);border-radius:14px;
+    padding:1.25rem 1.35rem;background:rgba(255,255,255,.02);
+    display:flex;flex-direction:column;gap:.4rem;
+  }
+  .compare-card.recommended{
+    border-color:rgba(124,106,255,.4);
+    background:linear-gradient(180deg, rgba(124,106,255,.08), rgba(124,106,255,.02));
+  }
+  .compare-card .badge{
+    align-self:flex-start;font-size:.7rem;font-weight:600;letter-spacing:.04em;
+    text-transform:uppercase;color:#7c6aff;
+    background:rgba(124,106,255,.15);padding:.25em .6em;border-radius:999px;
+    margin-bottom:.2rem;
+  }
+  .compare-card h3{margin:0;font-size:1.15rem}
+  .compare-card .meta{color:#9a9aae;font-size:.85rem;margin:0}
+  .compare-card .desc{color:#c5c5d2;font-size:.92rem;margin:.3rem 0 .2rem;line-height:1.55}
+  .compare-card .price{font-family:'Space Mono',monospace;font-size:.85rem;color:#9a9aae}
+  .compare-card .price strong{color:#ececf1;font-weight:700}
+
+  .step-block{
+    border:1px solid rgba(255,255,255,.08);border-radius:14px;
+    padding:1.5rem;background:rgba(255,255,255,.02);
+    margin-bottom:1.25rem;
+  }
+  .step-block h3{margin-top:0;display:flex;align-items:center;gap:.6rem}
+  .step-block h3 .pill{
+    font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+    color:#9a9aae;background:rgba(255,255,255,.06);
+    padding:.2em .55em;border-radius:999px;
+  }
+  .step-block ol{margin:.6rem 0 0;padding-left:1.3rem}
+  .step-block ol li{margin-bottom:.45rem}
+
+  .callout{
+    border-left:3px solid #7c6aff;background:rgba(124,106,255,.06);
+    padding:1rem 1.2rem;border-radius:0 10px 10px 0;
+    margin:1.2rem 0;
+  }
+  .callout p{margin:0;color:#dcdce6}
+
+  footer{border-top:1px solid rgba(255,255,255,.08);padding:2rem 0;color:#9a9aae;font-size:.88rem;text-align:center}
+  footer a{color:#7c6aff;margin:0 .4rem}
+
+  @media (max-width:640px){
+    .compare{grid-template-columns:1fr}
+    .doc h1{font-size:2rem}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-dot"></span>
+      PromptVault
+    </a>
+    <a href="index.html" class="nav-back">← Back to home</a>
+  </div>
+</nav>
+
+<main>
+  <article class="container doc">
+    <h1>Use your own API key</h1>
+    <p class="lede">PromptVault works out of the box: every account gets <strong>3 free AI improvements</strong>, and Pro plans include a generous monthly quota. If you want unlimited usage, full control over your data, or to skip plans entirely, plug in your own provider key — it takes about 60 seconds.</p>
+
+    <h2>Why bring your own key?</h2>
+    <ul>
+      <li><strong>Unlimited improvements</strong> — no monthly cap, you only pay (or don't) the provider directly.</li>
+      <li><strong>Full data control</strong> — requests go straight from your browser to the provider you choose.</li>
+      <li><strong>Pick your model</strong> — fast and free with Groq or Gemini, top-tier quality with GPT-4o or Claude.</li>
+    </ul>
+
+    <h2>Which provider should I pick?</h2>
+    <p>If you just want it to work for free, pick <strong>Groq</strong>. If you already use Google AI Studio, <strong>Gemini</strong> is just as good. The two paid options are for users who want premium quality.</p>
+
+    <div class="compare">
+      <div class="compare-card recommended">
+        <span class="badge">Recommended</span>
+        <h3>Groq</h3>
+        <p class="meta">Llama 3.3 70B · Mixtral · Gemma</p>
+        <p class="desc">The fastest provider on the planet (literally — custom inference chips). Very generous free tier, perfect for prompt rewriting.</p>
+        <p class="price"><strong>Free tier</strong> · no credit card</p>
+      </div>
+
+      <div class="compare-card recommended">
+        <span class="badge">Free · Google</span>
+        <h3>Gemini</h3>
+        <p class="meta">Gemini 2.0 Flash · 1.5 Pro</p>
+        <p class="desc">Google's API. Free tier is wide enough for daily use (1,500 requests/day on Flash). Quality is excellent.</p>
+        <p class="price"><strong>Free tier</strong> · just a Google account</p>
+      </div>
+
+      <div class="compare-card">
+        <h3>OpenAI</h3>
+        <p class="meta">GPT-4o · GPT-4o-mini · o1</p>
+        <p class="desc">Industry standard. GPT-4o-mini is cheap and great for prompt rewriting (a few cents per hundred calls).</p>
+        <p class="price"><strong>Pay-as-you-go</strong> · $5 minimum credit</p>
+      </div>
+
+      <div class="compare-card">
+        <h3>Anthropic</h3>
+        <p class="meta">Claude Sonnet 4.6 · Haiku 4.5</p>
+        <p class="desc">Best-in-class for nuanced rewrites and long context. Haiku is fast and inexpensive; Sonnet for premium quality.</p>
+        <p class="price"><strong>Pay-as-you-go</strong> · $5 minimum credit</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p><strong>TL;DR</strong> — Start with Groq. It's free, fast, and the rewrite quality is more than good enough. Switch later if you want a different model.</p>
+    </div>
+
+    <h2>How to create your key</h2>
+
+    <div class="step-block">
+      <h3>Groq <span class="pill">Free</span></h3>
+      <ol>
+        <li>Go to <a class="link" href="https://console.groq.com" target="_blank" rel="noopener">console.groq.com</a> and sign in (Google or GitHub).</li>
+        <li>Open the left sidebar → <strong>API Keys</strong>.</li>
+        <li>Click <strong>Create API Key</strong>, give it a name (e.g. "PromptVault"), and copy the key — it starts with <code>gsk_…</code>.</li>
+        <li>Paste it into PromptVault → Settings → AI → API Key, and pick a Groq model (Llama 3.3 70B is a good default).</li>
+      </ol>
+    </div>
+
+    <div class="step-block">
+      <h3>Gemini (Google AI Studio) <span class="pill">Free</span></h3>
+      <ol>
+        <li>Go to <a class="link" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> and sign in with your Google account.</li>
+        <li>Click <strong>Create API key</strong> → <strong>Create API key in new project</strong>.</li>
+        <li>Copy the key (it starts with <code>AIza…</code>).</li>
+        <li>Paste it into PromptVault → Settings → AI → API Key, and pick a Gemini model (Flash is the cheapest/fastest).</li>
+      </ol>
+    </div>
+
+    <div class="step-block">
+      <h3>OpenAI <span class="pill">Paid · $5 min</span></h3>
+      <ol>
+        <li>Go to <a class="link" href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">platform.openai.com/api-keys</a> and sign in.</li>
+        <li>Add at least <strong>$5 of credit</strong> from <a class="link" href="https://platform.openai.com/account/billing" target="_blank" rel="noopener">Billing</a> (required before you can use the API).</li>
+        <li>Click <strong>Create new secret key</strong>, copy it (starts with <code>sk-…</code>) — you won't be able to see it again.</li>
+        <li>Paste it into PromptVault → Settings → AI → API Key, and pick an OpenAI model (GPT-4o-mini is the cheapest option).</li>
+      </ol>
+    </div>
+
+    <div class="step-block">
+      <h3>Anthropic (Claude) <span class="pill">Paid · $5 min</span></h3>
+      <ol>
+        <li>Go to <a class="link" href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a> and sign up.</li>
+        <li>Add at least <strong>$5 of credit</strong> from <strong>Plans &amp; Billing</strong>.</li>
+        <li>Open <strong>API Keys</strong> → <strong>Create Key</strong> and copy the value (starts with <code>sk-ant-…</code>).</li>
+        <li>Paste it into PromptVault → Settings → AI → API Key, and pick a Claude model (Haiku is cheapest, Sonnet is best quality).</li>
+      </ol>
+    </div>
+
+    <h2>Where to paste it in the extension</h2>
+    <ol>
+      <li>Open the PromptVault side panel on any AI chat site.</li>
+      <li>Click the <strong>Settings</strong> gear at the top right.</li>
+      <li>Open the <strong>AI</strong> section.</li>
+      <li>Pick your provider, paste the key, choose a model, and hit <strong>Save</strong>.</li>
+    </ol>
+    <p>From there, every prompt you select inside the panel can be improved with one click — no monthly cap, you're using your own quota.</p>
+
+    <div class="callout">
+      <p><strong>Privacy note</strong> — your API key is stored locally with the Chrome <code>storage.local</code> API. It's never sent to PromptVault servers; requests go directly from your browser to the provider you chose.</p>
+    </div>
+
+    <h2>Need help?</h2>
+    <p>Stuck on a step or unsure which provider fits you? Email <a class="link" href="mailto:andreaguarnieri71@gmail.com">andreaguarnieri71@gmail.com</a> — happy to help.</p>
+  </article>
+</main>
+
+<footer>
+  <div class="container">
+    © 2025 PromptVault.
+    <a href="index.html">Home</a>·
+    <a href="privacy.html">Privacy Policy</a>·
+    <a href="terms.html">Terms of Service</a>·
+    <a href="mailto:andreaguarnieri71@gmail.com">Contact</a>
+  </div>
+</footer>
+
+</body>
+</html>
